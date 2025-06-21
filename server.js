@@ -9,9 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server); // <-- this defines 'io'
 
 // Express routes
-app.get('/', (req, res) => {
-    res.send('Hello from Express with Socket.IO!');
-});
+app.use(express.static('public')); // Serve static files from 'public' folder
 
 // Socket.IO setup
 io.on('connection', (socket) => {
