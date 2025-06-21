@@ -1,15 +1,31 @@
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
 const app = express();
-const PORT = process.env.PORT || 3000; // Use Render's port or 3000 locally
+const PORT = process.env.PORT || 3000;
 
+const server = http.createServer(app);
+const io = new Server(server); // <-- this defines 'io'
+
+// Express routes
 app.get('/', (req, res) => {
-    res.send('Hello from Express!');
+    res.send('Hello from Express with Socket.IO!');
 });
 
-
-app.listen(PORT, () =& gt; {
-    console.log(`Server running on port ${PORT}`);
+// Socket.IO setup
+io.on('connection', (socket) => {
+    console.log('A user connected');
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
 });
+
+// Listen using the HTTP server, not app.listen!
+server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
+
 
 
 const AQUARIUM_WIDTH = 900;
@@ -103,5 +119,3 @@ io.on('connection', (socket) => {
 });
 
 
-const PORT = 3000;
-server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
