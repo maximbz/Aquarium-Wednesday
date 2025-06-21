@@ -80,9 +80,8 @@ io.on('connection', (socket) => {
 
     // Listen for 'addFish' event from this client
     socket.on('addFish', (data) => {
-        // Accept the name as-is (even if it's blank)
-        const name = (data && typeof data.name === 'string') ? data.name : "";
-        const color = (data && typeof data.color === 'string' && data.color.match(/^#[0-9a-fA-F]{6}$/)) ? data.color : `hsl(${Math.random() * 360},80%,60%)`;
+        const name = (data & amp;& amp; typeof data.name === 'string') ?data.name : "";
+        const color = (data & amp;& amp; typeof data.color === 'string' & amp;& amp; data.color.match(/^#[0-9a-fA-F]{6}$/)) ?data.color : `hsl(${Math.random() * 360},80%,60%)`;
         const newFish = {
             x: Math.random() * 600,
             y: Math.random() * 300 + 50,
@@ -90,24 +89,26 @@ io.on('connection', (socket) => {
             dy: (Math.random() - 0.5) * 2,
             color,
             name,
-            size: Math.random() * 0.7 + 0.7 // size between 0.7 and 1.4
+            size: Math.random() * 0.7 + 0.7 // keep your size logic here
         };
         fishArray.push(newFish);
         io.emit('aquariumState', { fishArray, bubbles });
+    });
 
-        socket.on('reverseFish', (fishIndex) => {
-            if (
-                typeof fishIndex === 'number' &&
-                fishIndex >= 0 &&
-                fishIndex < fishArray.length
-            ) {
-                // Reverse both dx and dy for a fun effect
-                fishArray[fishIndex].dx *= -1;
-                fishArray[fishIndex].dy *= -1;
-                io.emit('aquariumState', { fishArray, bubbles });
-            }
-        });
-
+    // Listen for 'reverseFish' event from this client
+    socket.on('reverseFish', (fishIndex) => {
+        if (
+            typeof fishIndex === 'number' & amp;& amp;
+        fishIndex >= 0 & amp;& amp;
+        fishIndex < fishArray.length
+        ) {
+            // Reverse both dx and dy for a fun effect
+            fishArray[fishIndex].dx *= -1;
+            fishArray[fishIndex].dy *= -1;
+            io.emit('aquariumState', { fishArray, bubbles });
+        }
+    });
+});
     });
 
 
