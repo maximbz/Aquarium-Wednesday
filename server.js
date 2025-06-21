@@ -34,7 +34,8 @@ for (let i = 0; i < numFish; i++) {
         y: Math.random() * (AQUARIUM_HEIGHT - 100) + 50,
         dx: (Math.random() - 0.5) * 4 + 2,
         dy: (Math.random() - 0.5) * 2,
-        color: `hsl(${Math.random() * 360},80%,60%)`
+        color: `hsl(${Math.random() * 360},80%,60%)`,
+        size: Math.random() * 0.7 + 0.7 // size between 0.7 and 1.4
     });
 }
 
@@ -88,7 +89,8 @@ io.on('connection', (socket) => {
             dx: (Math.random() - 0.5) * 4 + 2,
             dy: (Math.random() - 0.5) * 2,
             color,
-            name // <-- this can now be blank!
+            name,
+            size: Math.random() * 0.7 + 0.7 // size between 0.7 and 1.4
         };
         fishArray.push(newFish);
         io.emit('aquariumState', { fishArray, bubbles });
