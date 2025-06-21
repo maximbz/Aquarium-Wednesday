@@ -2,9 +2,10 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000; // Use Render's port or 3000 locally
 
-app.get('/', (req, res) =& gt; {
-    res.send('Hello from Express on Render!');
+app.get('/', (req, res) => {
+    res.send('Hello from Express!');
 });
+
 
 app.listen(PORT, () =& gt; {
     console.log(`Server running on port ${PORT}`);
