@@ -80,8 +80,8 @@ io.on('connection', (socket) => {
 
     // Listen for 'addFish' event from this client
     socket.on('addFish', (data) => {
-        const name = (data & amp;& amp; typeof data.name === 'string') ?data.name : "";
-        const color = (data & amp;& amp; typeof data.color === 'string' & amp;& amp; data.color.match(/^#[0-9a-fA-F]{6}$/)) ?data.color : `hsl(${Math.random() * 360},80%,60%)`;
+        const name = (data && typeof data.name === 'string') ?data.name : "";
+        const color = (data && typeof data.color === 'string' && data.color.match(/^#[0-9a-fA-F]{6}$/)) ?data.color : `hsl(${Math.random() * 360},80%,60%)`;
         const newFish = {
             x: Math.random() * 600,
             y: Math.random() * 300 + 50,
@@ -98,8 +98,8 @@ io.on('connection', (socket) => {
     // Listen for 'reverseFish' event from this client
     socket.on('reverseFish', (fishIndex) => {
         if (
-            typeof fishIndex === 'number' & amp;& amp;
-        fishIndex >= 0 & amp;& amp;
+            typeof fishIndex === 'number' &&
+        fishIndex >= 0 &&
         fishIndex < fishArray.length
         ) {
             // Reverse both dx and dy for a fun effect
