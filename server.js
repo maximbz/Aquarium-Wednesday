@@ -6,23 +6,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
-const io = new Server(server); // <-- this defines 'io'
+const io = new Server(server);
 
-// Express routes
-app.use(express.static('public')); // Serve static files from 'public' folder
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
 
-// Socket.IO setup
 io.on('connection', (socket) => {
     console.log('A user connected');
-    socket.on('disconnect', () => {
-        console.log('A user disconnected');
-    });
 });
 
-// Listen using the HTTP server, not app.listen!
 server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
+
 
 
 
