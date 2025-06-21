@@ -1,15 +1,18 @@
 const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
-
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+const PORT = process.env.PORT || 3000; // Use Render's port or 3000 locally
+
+app.get('/', (req, res) =& gt; {
+    res.send('Hello from Express on Render!');
+});
+
+app.listen(PORT, () =& gt; {
+    console.log(`Server running on port ${PORT}`);
+});
+
 
 const AQUARIUM_WIDTH = 900;
 const AQUARIUM_HEIGHT = 600;
-
-app.use(express.static('public'));
 
 // Multiple fish
 let fishArray = [];
