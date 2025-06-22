@@ -29,6 +29,9 @@
         const socket = io();
         console.log('Socket.IO client loaded:', socket);
 
+        let animationStart = Date.now();
+
+
         function getRandomColor() {
             // Returns a random hex color string
             return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
@@ -51,6 +54,45 @@
             ctx.closePath();
             ctx.fill();
         }
+
+        function drawSeaweed() {
+            const seaweedCount = 7;
+            const seaweedSpacing = canvas.width / (seaweedCount + 1);
+
+            // Use elapsed time since page load for deterministic animation
+            let elapsed = (Date.now() - animationStart) / 1000; // seconds
+
+            for (let i = 1; i <= seaweedCount; i++) {
+                let baseX = i * seaweedSpacing;
+                let baseY = canvas.height - 30; // Just above the sand
+                let height = 60 + Math.sin(elapsed / 0.9 + i) * 10; // Animate sway
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(baseX, baseY);
+
+                for (let seg = 0; seg < 3; seg++) {
+                    let segY = baseY - (height * (seg + 1) / 3);
+                    let sway = Math.sin(elapsed + i + seg) * 8 * (1 - seg / 3);
+                    ctx.quadraticCurveTo(
+                        baseX + sway,
+                        baseY - height * (seg + 0.5) / 3,
+                        baseX,
+                        segY
+                    );
+                }
+
+                ctx.strokeStyle = "#228B22";
+                ctx.lineWidth = 4;
+                ctx.shadowColor = "#145214";
+                ctx.shadowBlur = 5;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+
+
         function drawFish(fish) {
             const scale = fish.size || 1;
             ctx.save();
@@ -229,6 +271,7 @@
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSeaweed();  // <-- Add this line!
             drawSand();
             drawCrab(crab);
 
@@ -242,6 +285,7 @@
             }
             requestAnimationFrame(draw);
         }
+
 
         let crab = null;
         socket.on('aquariumState', (state) => {
