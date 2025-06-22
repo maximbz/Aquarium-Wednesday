@@ -231,7 +231,6 @@
 
             ctx.restore();
 
-
             ctx.restore();
 
             if (fish.name && fish.name.trim().length > 0) {
@@ -380,11 +379,11 @@
                         pupilTimer: Math.random() * 2 + 1
                     };
                 }
-                if (!animationStarted) {
-                    animationStarted = true;
-                    draw();
-                }
             });
+            if (!animationStarted) {
+                animationStarted = true;
+                draw();
+            }
         });
 
         document.getElementById('addFishBtn').onclick = function () {
@@ -400,7 +399,7 @@
             nameInput.value = '';
         };
 
-        draw();
+        // draw(); <-- REMOVED! Don't call draw() here.
 
         canvas.addEventListener('click', function (event) {
             const rect = canvas.getBoundingClientRect();
