@@ -52,33 +52,34 @@
             ctx.fill();
         }
         function drawFish(fish) {
-            const scale = fish.size || 1; // Use fish.size, fallback to 1
-
+            const scale = fish.size || 1;
             ctx.save();
             ctx.translate(fish.x, fish.y);
 
-            // Flip horizontally for direction, and scale for size
             let flip = (fish.dx < 0) ? -1 : 1;
             ctx.scale(flip * scale, scale);
 
-            // Draw the fish body
+            // Draw the body
             ctx.beginPath();
             ctx.ellipse(0, 0, 30, 15, 0, 0, Math.PI * 2);
             ctx.fillStyle = fish.color;
             ctx.fill();
 
-            // Draw the tail
+            // Calculate tail wiggle offset
+            let tailWiggle = Math.sin(fish.tailWigglePhase || 0) * 10; // 10 is wiggle amplitude
+
+            // Draw the tail with wiggle
             ctx.beginPath();
             ctx.moveTo(-30, 0);
-            ctx.lineTo(-45, -10);
-            ctx.lineTo(-45, 10);
+            ctx.lineTo(-45, -10 + tailWiggle);
+            ctx.lineTo(-45, 10 + tailWiggle);
             ctx.closePath();
             ctx.fillStyle = "#d94f00";
             ctx.fill();
 
             ctx.restore();
 
-            // Only draw the name if it's not blank
+            // Draw name if present
             if (fish.name && fish.name.trim().length > 0) {
                 ctx.font = `${14 * scale}px Arial`;
                 ctx.fillStyle = "#222";
@@ -86,6 +87,7 @@
                 ctx.fillText(fish.name, fish.x, fish.y - 25 * scale);
             }
         }
+
 
 
 

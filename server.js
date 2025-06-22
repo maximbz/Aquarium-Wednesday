@@ -24,8 +24,10 @@ for (let i = 0; i < numFish; i++) {
         dx: (Math.random() - 0.5) * 4 + 2,
         dy: (Math.random() - 0.5) * 2,
         color: `hsl(${Math.random() * 360},80%,60%)`,
-        size: Math.random() * 0.7 + 0.7 // size between 0.7 and 1.4
+        size: Math.random() * 0.7 + 0.7,
+        tailWigglePhase: Math.random() * Math.PI * 2 // NEW: randomize start phase
     });
+
 }
 
 // Bubbles (background)
@@ -49,6 +51,7 @@ setInterval(() => {
         // Bounce off edges
         if (fish.x < 0 || fish.x > AQUARIUM_WIDTH) fish.dx *= -1;
         if (fish.y < 30 || fish.y > AQUARIUM_HEIGHT - 30) fish.dy *= -1;
+        fish.tailWigglePhase += 0.2; // adjust speed as desired
     }
     // Update bubbles
     for (let bubble of bubbles) {
@@ -81,7 +84,8 @@ io.on('connection', (socket) => {
             dy: (Math.random() - 0.5) * 2,
             color,
             name,
-            size: Math.random() * 0.7 + 0.7 // size between 0.7 and 1.4
+            size: Math.random() * 0.5 + 1.5 // size between 0.7 and 1.4
+            tailWigglePhase: Math.random() * Math.PI * 2
         };
         fishArray.push(newFish);
         io.emit('aquariumState', { fishArray, bubbles });
