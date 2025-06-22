@@ -13,6 +13,13 @@ app.use(express.static('public'));
 
 const AQUARIUM_WIDTH = 900;
 const AQUARIUM_HEIGHT = 600;
+const FISH_SIZE_MIN = 0.4; // Smallest fish (change as desired)
+const FISH_SIZE_MAX = 2.0; // Largest fish (change as desired)
+
+function randomFishSize() {
+    return Math.random() * (FISH_SIZE_MAX - FISH_SIZE_MIN) + FISH_SIZE_MIN;
+}
+
 
 // Multiple fish
 let fishArray = [];
@@ -24,7 +31,7 @@ for (let i = 0; i < numFish; i++) {
         dx: (Math.random() - 0.5) * 4 + 2,
         dy: (Math.random() - 0.5) * 2,
         color: `hsl(${Math.random() * 360},80%,60%)`,
-        size: Math.random() * 0.7 + 0.7, // size between 0.7 and 1.4
+        size: randomFishSize(),
         tailWigglePhase: Math.random() * Math.PI * 2 // <-- add this line
     });
 
@@ -99,7 +106,7 @@ io.on('connection', (socket) => {
             dy: (Math.random() - 0.5) * 2,
             color,
             name,
-            size: Math.random() * 0.7 + 0.7, // size between 0.7 and 1.4
+            size: randomFishSize(),
             tailWigglePhase: Math.random() * Math.PI * 2 // <-- add this line
         };
 
