@@ -203,7 +203,7 @@ io.on('connection', (socket) => {
             // Reverse both dx and dy for a fun effect
             fishArray[fishIndex].dx *= -1;
             fishArray[fishIndex].dy *= -1;
-            io.emit('aquariumState', { fishArray, bubbles });
+            io.emit('aquariumState', { fishArray, bubbles, crab });
         }
     });
 });
