@@ -60,6 +60,15 @@ for (let i = 0; i < numBubbles; i++) {
     });
 }
 
+let crab = {
+    x: Math.random() < 0.5 ? 0 : AQUARIUM_WIDTH, // start at left or right
+    y: AQUARIUM_HEIGHT - 22, // just above the sand
+    direction: Math.random() < 0.5 ? 1 : -1, // 1 = right, -1 = left
+    moving: false,
+    waitTimer: 0 // time to wait before next walk
+};
+
+
 // Update and broadcast state regularly
 setInterval(() => {
     // Update fish positions
@@ -94,8 +103,29 @@ setInterval(() => {
             bubble.speed = Math.random() * 1 + 0.5;
         }
     }
+
+    // Crab logic
+    if (!crab.moving) {
+        crab.waitTimer -= 1;
+        if (crab.waitTimer <= 0) {
+            crab.moving = true;
+            crab.direction = Math.random() < 0.5 ? 1 : -1;
+            crab.x = crab.direction === 1 ? 0 : AQUARIUM_WIDTH;
+        }
+    } else {
+        crab.x += crab.direction * 1; // move slowly
+        // When crab is fully off the opposite side, stop and start waiting
+        if ((crab.direction === 1 && crab.x > AQUARIUM_WIDTH + 20) ||
+            (crab.direction === -1 && crab.x < -20)) {
+            crab.moving = false;
+            crab.waitTimer = 200 + Math.floor(Math.random() * 400); // Wait 6–15 seconds
+        }
+    }
+
+
     // Broadcast to all clients
-    io.emit('aquariumState', { fishArray, bubbles });
+    io.emit('aquariumState', { fishArray, bubbles, crab });
+
 }, 30);
 
 // Socket.IO event handling
