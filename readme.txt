@@ -11,6 +11,4 @@ fish have eyes, which can be selected when you add a fish
 	half lidded (boared)
 	half lidded (happy)
 	the eyes blink, pupils look around
-the fish have fins that wiggle
-the rear fin wiggles
 a little crab walks along the bottom, slowly from one side to the other, sometimes
