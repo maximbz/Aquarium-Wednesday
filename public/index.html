@@ -66,16 +66,19 @@
             ctx.fill();
 
             // Draw single wiggling side fin
-            let finWiggle = Math.sin((fish.tailWigglePhase || 0) + 1.0) * 8;
+            // Smaller, centered side fin
+            let finWiggle = Math.sin((fish.tailWigglePhase || 0) + 1.0) * 4; // reduce amplitude
+
             ctx.beginPath();
-            ctx.moveTo(0, 0); // Center of body
-            ctx.quadraticCurveTo(20, -10 + finWiggle, 28, 0);
-            ctx.quadraticCurveTo(20, 10 + finWiggle, 0, 0);
+            ctx.moveTo(8, 0); // start a bit forward from center
+            ctx.quadraticCurveTo(16, -6 + finWiggle, 20, 0); // control point and tip, closer in
+            ctx.quadraticCurveTo(16, 6 + finWiggle, 8, 0);   // back to start
             ctx.closePath();
             ctx.fillStyle = "#ffe066";
             ctx.globalAlpha = 0.7;
             ctx.fill();
             ctx.globalAlpha = 1.0;
+
 
             // Draw the tail with wiggle
             let tailWiggle = Math.sin(fish.tailWigglePhase || 0) * 10;
