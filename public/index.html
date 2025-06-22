@@ -166,7 +166,54 @@
                 );
                 ctx.stroke();
             }
+            // Claws (arms with pincers)
+            function drawClawArm(side) {
+                // side: -1 for left, 1 for right
+                // Arm base coordinates
+                const armBaseX = 10 * side;
+                const armBaseY = -2;
 
+                // Arm direction/angle
+                const armAngle = side === -1 ? -Math.PI / 3 : -2 * Math.PI / 3;
+                const armLength = 10;
+
+                // Arm tip coordinates
+                const armTipX = armBaseX + armLength * Math.cos(armAngle);
+                const armTipY = armBaseY + armLength * Math.sin(armAngle);
+
+                // Draw arm
+                ctx.beginPath();
+                ctx.moveTo(armBaseX, armBaseY);
+                ctx.lineTo(armTipX, armTipY);
+                ctx.stroke();
+
+                // Draw pincer (two small lines forming a "V" at the tip)
+                const clawSpread = Math.PI / 6; // 30 degrees
+                const clawLength = 6;
+
+                // First pincer segment
+                ctx.beginPath();
+                ctx.moveTo(armTipX, armTipY);
+                ctx.lineTo(
+                    armTipX + clawLength * Math.cos(armAngle + clawSpread),
+                    armTipY + clawLength * Math.sin(armAngle + clawSpread)
+                );
+                ctx.stroke();
+
+                // Second pincer segment
+                ctx.beginPath();
+                ctx.moveTo(armTipX, armTipY);
+                ctx.lineTo(
+                    armTipX + clawLength * Math.cos(armAngle - clawSpread),
+                    armTipY + clawLength * Math.sin(armAngle - clawSpread)
+                );
+                ctx.stroke();
+            }
+            // Call this for both sides in your drawCrab function, after drawing the legs:
+            ctx.strokeStyle = "#a0522d";
+            ctx.lineWidth = 2;
+            drawClawArm(-1); // left arm
+            drawClawArm(1);  // right arm
 
 
             // Claws

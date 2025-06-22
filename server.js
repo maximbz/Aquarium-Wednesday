@@ -123,7 +123,7 @@ setInterval(() => {
         }
     } else {
         crab.x += crab.direction * 1;
-        crab.stepPhase += 0.2; // advance phase for leg animation
+        crab.stepPhase += 0.7; // advance phase for leg animation
         if ((crab.direction === 1 && crab.x > AQUARIUM_WIDTH + 20) ||
             (crab.direction === -1 && crab.x < -20)) {
             crab.moving = false;
