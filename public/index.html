@@ -65,30 +65,31 @@
 
         function drawSeaweed() {
             const seaweedCount = 7;
-            const margin = 40; // Don't put seaweed at the very edge
-            const minDist = 30; // Minimum distance between tufts
-
-            // Use a fixed seed for identical placement on all clients
+            const margin = 40;
+            const minDist = 30;
             const rand = seededRandom(12345);
+            let seaweedSpecs = [];
 
-            // Generate random but deterministic X positions
-            let positions = [];
-            while (positions.length < seaweedCount) {
+            // Generate random, deterministic seaweed properties
+            while (seaweedSpecs.length < seaweedCount) {
                 let x = margin + rand() * (canvas.width - 2 * margin);
-                // Ensure minimum distance from previous tufts
-                if (positions.every(px => Math.abs(px - x) > minDist)) {
-                    positions.push(x);
+                let height = 55 + rand() * 30; // 55-85 px tall
+                let width = 3 + rand() * 4;    // 3-7 px wide
+                // Ensure minimum distance between tufts
+                if (seaweedSpecs.every(sw => Math.abs(sw.x - x) > minDist)) {
+                    seaweedSpecs.push({ x, height, width });
                 }
             }
-            positions.sort((a, b) => a - b); // optional: sort for left-to-right order
+            seaweedSpecs.sort((a, b) => a.x - b.x);
 
-            // Animate sway based on time since page load
-            let elapsed = (Date.now() - animationStart) / 1000; // seconds
+            let elapsed = (Date.now() - animationStart) / 1000;
 
             for (let i = 0; i < seaweedCount; i++) {
-                let baseX = positions[i];
+                let spec = seaweedSpecs[i];
+                let baseX = spec.x;
                 let baseY = canvas.height - 8; // Planted in the sand!
-                let height = 60 + Math.sin(elapsed / 0.9 + i) * 10; // Animate sway
+                let height = spec.height + Math.sin(elapsed / 0.9 + i) * 10; // Animate sway
+                let lineWidth = spec.width;
 
                 ctx.save();
                 ctx.beginPath();
@@ -106,12 +107,14 @@
                 }
 
                 ctx.strokeStyle = "#228B22";
-                ctx.lineWidth = 4;
+                ctx.lineWidth = lineWidth;
                 ctx.shadowColor = "#145214";
                 ctx.shadowBlur = 5;
                 ctx.stroke();
                 ctx.restore();
             }
+        }
+
 
         }
 
