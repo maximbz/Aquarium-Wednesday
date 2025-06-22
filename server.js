@@ -51,11 +51,21 @@ setInterval(() => {
         fish.x += fish.dx;
         fish.y += fish.dy;
         // Bounce off edges
-        if (fish.x < 0 || fish.x > AQUARIUM_WIDTH) fish.dx *= -1;
+        if (fish.x < 0 || fish.x > AQUARIUM_WIDTH) {
+            if (fishArray.length > 3 && Math.random() < 0.1) { // 10% chance to leave
+                // Remove this fish from the array
+                fish._remove = true; // Mark for removal to avoid mutating array while looping
+            } else {
+                fish.dx *= -1; // Bounce as usual
+            }
+        }
+
         if (fish.y < 30 || fish.y > AQUARIUM_HEIGHT - 30) fish.dy *= -1;
         fish.tailWigglePhase += 0.2; // or whatever speed you like
 
     }
+    fishArray = fishArray.filter(fish => !fish._remove);
+
     // Update bubbles
     for (let bubble of bubbles) {
         bubble.y -= bubble.speed;
