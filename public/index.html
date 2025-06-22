@@ -119,9 +119,11 @@
         }
 
         socket.on('aquariumState', (state) => {
+            console.log('Received aquariumState:', state);
             fishArray = state.fishArray;
             bubbles = state.bubbles;
         });
+
 
         document.getElementById('addFishBtn').onclick = function () {
             const nameInput = document.getElementById('fishNameInput');
