@@ -74,9 +74,6 @@ setInterval(() => {
         fish.x += fish.dx;
         fish.y += fish.dy;
 
-
-            console.log(`Fish 0 position: x=${fish.x.toFixed(2)} y=${fish.y.toFixed(2)}`);
-
         if (!fish.leaving && (fish.x < 0 || fish.x > AQUARIUM_WIDTH)) {
             if (fishArray.length > 3 && Math.random() < 0.05) {
                 fish.leaving = true;
