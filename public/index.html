@@ -136,13 +136,12 @@
             ctx.strokeStyle = "#a0522d";
             ctx.lineWidth = 2;
             const legLength = 12;
-            const steps = 1; // Only two positions: -1 and 1
 
             for (let i = -1; i <= 1; i++) {
                 let phase = (crab.stepPhase || 0) + i * 0.6;
                 let raw = Math.sin(phase);
-                let quantized = Math.sign(raw); // Will be -1, 0, or 1 (but mostly -1 or 1)
-                let wiggle = quantized * 0.25; // amplitude
+                let quantized = Math.sign(raw);
+                let wiggle = quantized * 0.25;
 
                 let baseAngle = Math.PI / 3 + i * 0.2;
                 let angleLeft = baseAngle - wiggle;
@@ -166,16 +165,14 @@
                 );
                 ctx.stroke();
             }
-            // Claws (arms with pincers)
-            function drawClawArm(side) {
-                // side: -1 for left, 1 for right
-                // Arm base coordinates
-                const armBaseX = 10 * side;
-                const armBaseY = -2;
 
-                // Arm direction/angle
-                const armAngle = side === -1 ? -Math.PI / 3 : -2 * Math.PI / 3;
-                const armLength = 10;
+            // Claws (arms with pincers)
+            function drawClaw(side) {
+                // side: -1 for left, 1 for right
+                const armBaseX = 12 * side;
+                const armBaseY = 2;
+                const armLength = 18;
+                const armAngle = side * Math.PI / 4; // 45 degrees outward
 
                 // Arm tip coordinates
                 const armTipX = armBaseX + armLength * Math.cos(armAngle);
@@ -185,18 +182,20 @@
                 ctx.beginPath();
                 ctx.moveTo(armBaseX, armBaseY);
                 ctx.lineTo(armTipX, armTipY);
+                ctx.strokeStyle = "#a0522d";
+                ctx.lineWidth = 2.5;
                 ctx.stroke();
 
-                // Draw pincer (two small lines forming a "V" at the tip)
-                const clawSpread = Math.PI / 6; // 30 degrees
-                const clawLength = 6;
+                // Draw pincer (two short lines forming a "V" at the tip)
+                const pincerLength = 10;
+                const pincerAngle = Math.PI / 5; // 36 degrees
 
                 // First pincer segment
                 ctx.beginPath();
                 ctx.moveTo(armTipX, armTipY);
                 ctx.lineTo(
-                    armTipX + clawLength * Math.cos(armAngle + clawSpread),
-                    armTipY + clawLength * Math.sin(armAngle + clawSpread)
+                    armTipX + pincerLength * Math.cos(armAngle + pincerAngle),
+                    armTipY + pincerLength * Math.sin(armAngle + pincerAngle)
                 );
                 ctx.stroke();
 
@@ -204,27 +203,13 @@
                 ctx.beginPath();
                 ctx.moveTo(armTipX, armTipY);
                 ctx.lineTo(
-                    armTipX + clawLength * Math.cos(armAngle - clawSpread),
-                    armTipY + clawLength * Math.sin(armAngle - clawSpread)
+                    armTipX + pincerLength * Math.cos(armAngle - pincerAngle),
+                    armTipY + pincerLength * Math.sin(armAngle - pincerAngle)
                 );
                 ctx.stroke();
             }
-            // Call this for both sides in your drawCrab function, after drawing the legs:
-            ctx.strokeStyle = "#a0522d";
-            ctx.lineWidth = 2;
-            drawClawArm(-1); // left arm
-            drawClawArm(1);  // right arm
-
-
-            // Claws
-            ctx.beginPath();
-            ctx.moveTo(-10, -2);
-            ctx.lineTo(-16, -8);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(10, -2);
-            ctx.lineTo(16, -8);
-            ctx.stroke();
+            drawClaw(-1); // left
+            drawClaw(1);  // right
 
             // Eyes
             ctx.beginPath();
@@ -240,6 +225,7 @@
 
             ctx.restore();
         }
+
 
 
         function draw() {
