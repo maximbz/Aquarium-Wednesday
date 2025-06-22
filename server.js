@@ -61,12 +61,14 @@ for (let i = 0; i < numBubbles; i++) {
 }
 
 let crab = {
-    x: Math.random() < 0.5 ? 0 : AQUARIUM_WIDTH, // start at left or right
-    y: AQUARIUM_HEIGHT - 22, // just above the sand
-    direction: Math.random() < 0.5 ? 1 : -1, // 1 = right, -1 = left
+    x: Math.random() < 0.5 ? 0 : AQUARIUM_WIDTH,
+    y: AQUARIUM_HEIGHT - 22,
+    direction: Math.random() < 0.5 ? 1 : -1,
     moving: false,
-    waitTimer: 0 // time to wait before next walk
+    waitTimer: 0,
+    stepPhase: 0 // for leg animation
 };
+
 
 
 // Update and broadcast state regularly
@@ -113,14 +115,16 @@ setInterval(() => {
             crab.x = crab.direction === 1 ? 0 : AQUARIUM_WIDTH;
         }
     } else {
-        crab.x += crab.direction * 1; // move slowly
-        // When crab is fully off the opposite side, stop and start waiting
+        crab.x += crab.direction * 1;
+        crab.stepPhase += 0.2; // advance phase for leg animation
         if ((crab.direction === 1 && crab.x > AQUARIUM_WIDTH + 20) ||
             (crab.direction === -1 && crab.x < -20)) {
             crab.moving = false;
-            crab.waitTimer = 200 + Math.floor(Math.random() * 400); // Wait 6–15 seconds
+            crab.waitTimer = 200 + Math.floor(Math.random() * 400);
+            crab.stepPhase = 0; // reset animation
         }
     }
+
 
 
     // Broadcast to all clients
