@@ -19,6 +19,12 @@
         <input id="fishNameInput" type="text" placeholder="Fish name" maxlength="16">
         <input id="fishColorInput" type="color" value="#ff9900">
         <button id="addFishBtn">Add My Fish</button>
+        <select id="fishEyeInput">
+            <option value="round">Normal</option>
+            <option value="bored">Tired</option>
+            <option value="happy">Content</option>
+        </select>
+
     </div>
 
     <canvas id="aquarium" width="900" height="600"></canvas>
@@ -49,6 +55,8 @@
 
 
         let fishArray = [];
+        let fishEyeStates = {};
+
         let bubbles = [];
 
         function drawSand() {
@@ -115,6 +123,36 @@
             }
         }
 
+        function updateFishEyes(dt) {
+            fishArray.forEach((fish, i) => {
+                let state = fishEyeStates[i];
+                if (!state) return;
+                // Blinking logic
+                state.blinkTimer -= dt;
+                if (state.blinkTimer <= 0) {
+                    state.blink = true;
+                    state.blinkTimer = 0.15; // blink duration
+                    if (!state.wasBlinking) {
+                        state.wasBlinking = true;
+                        state.nextBlink = Math.random() * 4 + 2;
+                    }
+                } else if (state.blink && state.blinkTimer <= 0) {
+                    state.blink = false;
+                    state.blinkTimer = state.nextBlink || (Math.random() * 4 + 2);
+                    state.wasBlinking = false;
+                }
+
+                // Pupil wandering logic
+                state.pupilTimer -= dt;
+                if (state.pupilTimer <= 0) {
+                    state.pupilTargetAngle = Math.random() * Math.PI * 2;
+                    state.pupilTimer = Math.random() * 2 + 1;
+                }
+                // Smoothly move pupilAngle toward pupilTargetAngle
+                let diff = state.pupilTargetAngle - state.pupilAngle;
+                state.pupilAngle += diff * 0.1;
+            });
+        }
 
         function drawFish(fish) {
             const scale = fish.size || 1;
@@ -162,6 +200,58 @@
             ctx.closePath();
             ctx.fillStyle = fish.tailColor || "#d94f00";
             ctx.fill();
+
+            // Draw eyes
+            let eyeType = fish.eyes || "round";
+            let state = fishEyeStates[fishArray.indexOf(fish)] || {};
+            let blink = state.blink;
+            let pupilAngle = state.pupilAngle || 0;
+
+            // Eye position
+            let eyeX = 10, eyeY = -5, eyeSpacing = 10, eyeRadius = 6, pupilRadius = 2;
+            for (let e = -1; e <= 1; e += 2) { // two eyes
+                ctx.save();
+                ctx.translate(eyeX, eyeY * e);
+
+                // Eyeball
+                ctx.beginPath();
+                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+
+                // Eyelids for half-lidded
+                if (!blink && (eyeType === "bored" || eyeType === "happy")) {
+                    ctx.save();
+                    ctx.beginPath();
+                    if (eyeType === "bored") {
+                        ctx.ellipse(0, -eyeRadius * 0.4, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, true);
+                        ctx.lineTo(-eyeRadius, 0);
+                    } else if (eyeType === "happy") {
+                        ctx.ellipse(0, -eyeRadius * 0.1, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, false);
+                        ctx.lineTo(-eyeRadius, 0);
+                    }
+                    ctx.closePath();
+                    ctx.fillStyle = "#ffe066";
+                    ctx.globalAlpha = 0.8;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
+                    ctx.restore();
+                }
+
+                // Pupil movement
+                let pupilDist = blink ? 0 : eyeRadius * 0.5;
+                let px = Math.cos(pupilAngle) * pupilDist;
+                let py = Math.sin(pupilAngle) * pupilDist * (blink ? 0.2 : 1);
+
+                // Pupil
+                ctx.beginPath();
+                ctx.arc(px, py, pupilRadius, 0, Math.PI * 2);
+                ctx.fillStyle = "#222";
+                ctx.fill();
+
+                ctx.restore();
+            }
+
 
             ctx.restore();
 
@@ -292,22 +382,24 @@
 
 
 
+        let lastTime = Date.now();
         function draw() {
+            let now = Date.now();
+            let dt = (now - lastTime) / 1000;
+            lastTime = now;
+
+            updateFishEyes(dt);
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawSeaweed();  // <-- Add this line!
+            drawSeaweed();
             drawSand();
             drawCrab(crab);
 
-            // Draw bubbles
-            for (let bubble of bubbles) {
-                drawBubble(bubble);
-            }
-            // Draw fish
-            for (let fish of fishArray) {
-                drawFish(fish);
-            }
+            for (let bubble of bubbles) drawBubble(bubble);
+            for (let fish of fishArray) drawFish(fish);
             requestAnimationFrame(draw);
         }
+
 
 
         let crab = null;
@@ -315,6 +407,18 @@
             fishArray = state.fishArray;
             bubbles = state.bubbles;
             crab = state.crab || null;
+            // Initialize eye states for new fish
+            fishArray.forEach((fish, i) => {
+                if (!fishEyeStates[i]) {
+                    fishEyeStates[i] = {
+                        blink: false,
+                        blinkTimer: Math.random() * 4 + 2, // seconds until next blink
+                        pupilAngle: Math.random() * Math.PI * 2,
+                        pupilTargetAngle: Math.random() * Math.PI * 2,
+                        pupilTimer: Math.random() * 2 + 1
+                    };
+                }
+            });
         });
 
 
@@ -322,16 +426,16 @@
         document.getElementById('addFishBtn').onclick = function () {
             const nameInput = document.getElementById('fishNameInput');
             const colorInput = document.getElementById('fishColorInput');
-            const name = nameInput.value.trim(); // No fallback!
+            const eyeInput = document.getElementById('fishEyeInput');
+            const name = nameInput.value.trim();
             const color = colorInput.value || "#ff9900";
-            socket.emit('addFish', { name, color });
+            const eyes = eyeInput.value || "round";
+            socket.emit('addFish', { name, color, eyes });
 
-            // Set the color picker to a new random color for the next fish
             colorInput.value = getRandomColor();
-
-            // Clear the name input box
             nameInput.value = '';
         };
+
 
 
         draw();
