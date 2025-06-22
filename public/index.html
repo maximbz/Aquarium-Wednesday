@@ -190,45 +190,46 @@
             let blink = state.blink;
             let pupilAngle = state.pupilAngle || 0;
 
-            let eyeX = 10, eyeY = -5, eyeSpacing = 10, eyeRadius = 6, pupilRadius = 2;
-            for (let e = -1; e <= 1; e += 2) {
+            let eyeX = 10, eyeY = -5, eyeRadius = 6, pupilRadius = 2;
+            ctx.save();
+            ctx.translate(eyeX, eyeY); // Only one eye (upper)
+            ctx.beginPath();
+            ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+
+            // Eyelids for half-lidded
+            if (!blink && (eyeType === "bored" || eyeType === "happy")) {
                 ctx.save();
-                ctx.translate(eyeX, eyeY * e);
-
                 ctx.beginPath();
-                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
-                ctx.fillStyle = "#fff";
-                ctx.fill();
-
-                if (!blink && (eyeType === "bored" || eyeType === "happy")) {
-                    ctx.save();
-                    ctx.beginPath();
-                    if (eyeType === "bored") {
-                        ctx.ellipse(0, -eyeRadius * 0.4, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, true);
-                        ctx.lineTo(-eyeRadius, 0);
-                    } else if (eyeType === "happy") {
-                        ctx.ellipse(0, -eyeRadius * 0.1, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, false);
-                        ctx.lineTo(-eyeRadius, 0);
-                    }
-                    ctx.closePath();
-                    ctx.fillStyle = "#ffe066";
-                    ctx.globalAlpha = 0.8;
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
-                    ctx.restore();
+                if (eyeType === "bored") {
+                    ctx.ellipse(0, -eyeRadius * 0.4, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, true);
+                    ctx.lineTo(-eyeRadius, 0);
+                } else if (eyeType === "happy") {
+                    ctx.ellipse(0, -eyeRadius * 0.1, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, false);
+                    ctx.lineTo(-eyeRadius, 0);
                 }
-
-                let pupilDist = blink ? 0 : eyeRadius * 0.5;
-                let px = Math.cos(pupilAngle) * pupilDist;
-                let py = Math.sin(pupilAngle) * pupilDist * (blink ? 0.2 : 1);
-
-                ctx.beginPath();
-                ctx.arc(px, py, pupilRadius, 0, Math.PI * 2);
-                ctx.fillStyle = "#222";
+                ctx.closePath();
+                ctx.fillStyle = "#ffe066";
+                ctx.globalAlpha = 0.8;
                 ctx.fill();
-
+                ctx.globalAlpha = 1.0;
                 ctx.restore();
             }
+
+            // Pupil movement
+            let pupilDist = blink ? 0 : eyeRadius * 0.5;
+            let px = Math.cos(pupilAngle) * pupilDist;
+            let py = Math.sin(pupilAngle) * pupilDist * (blink ? 0.2 : 1);
+
+            // Pupil
+            ctx.beginPath();
+            ctx.arc(px, py, pupilRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#222";
+            ctx.fill();
+
+            ctx.restore();
+
 
             ctx.restore();
 
