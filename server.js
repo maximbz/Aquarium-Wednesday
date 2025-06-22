@@ -11,17 +11,6 @@ const io = new Server(server);
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-io.on('connection', (socket) => {
-    console.log('A user connected');
-});
-
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-
-
-
 const AQUARIUM_WIDTH = 900;
 const AQUARIUM_HEIGHT = 600;
 
@@ -51,6 +40,7 @@ for (let i = 0; i < numBubbles; i++) {
     });
 }
 
+// Update and broadcast state regularly
 setInterval(() => {
     // Update fish positions
     for (let fish of fishArray) {
@@ -74,14 +64,16 @@ setInterval(() => {
     io.emit('aquariumState', { fishArray, bubbles });
 }, 30);
 
+// Socket.IO event handling
 io.on('connection', (socket) => {
+    console.log('A user connected');
     // Send current state to new client
     socket.emit('aquariumState', { fishArray, bubbles });
 
     // Listen for 'addFish' event from this client
     socket.on('addFish', (data) => {
-        const name = (data && typeof data.name === 'string') ?data.name : "";
-        const color = (data && typeof data.color === 'string' && data.color.match(/^#[0-9a-fA-F]{6}$/)) ?data.color : `hsl(${Math.random() * 360},80%,60%)`;
+        const name = (data && typeof data.name === 'string') ? data.name : "";
+        const color = (data && typeof data.color === 'string' && data.color.match(/^#[0-9a-fA-F]{6}$/)) ? data.color : `hsl(${Math.random() * 360},80%,60%)`;
         const newFish = {
             x: Math.random() * 600,
             y: Math.random() * 300 + 50,
@@ -89,7 +81,7 @@ io.on('connection', (socket) => {
             dy: (Math.random() - 0.5) * 2,
             color,
             name,
-            size: Math.random() * 0.7 + 0.7 // keep your size logic here
+            size: Math.random() * 0.7 + 0.7 // size between 0.7 and 1.4
         };
         fishArray.push(newFish);
         io.emit('aquariumState', { fishArray, bubbles });
@@ -99,8 +91,8 @@ io.on('connection', (socket) => {
     socket.on('reverseFish', (fishIndex) => {
         if (
             typeof fishIndex === 'number' &&
-        fishIndex >= 0 &&
-        fishIndex < fishArray.length
+            fishIndex >= 0 &&
+            fishIndex < fishArray.length
         ) {
             // Reverse both dx and dy for a fun effect
             fishArray[fishIndex].dx *= -1;
@@ -109,10 +101,7 @@ io.on('connection', (socket) => {
         }
     });
 });
-    });
 
-
-
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
-
-
