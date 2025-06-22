@@ -21,12 +21,7 @@
         <label for="fishColorInput">Color:</label>
         <input id="fishColorInput" type="color" value="#ff9900" aria-label="Fish Color">
         <button id="addFishBtn" aria-label="Add My Fish">Add My Fish</button>
-        <label for="fishEyeInput">Eye Style:</label>
-        <select id="fishEyeInput" aria-label="Fish Eye Style">
-            <option value="round">Normal</option>
-            <option value="bored">Tired</option>
-            <option value="happy">Content</option>
-        </select>
+
     </div>
 
     <canvas id="aquarium" width="900" height="600"></canvas>
@@ -52,7 +47,6 @@
         }
 
         let fishArray = [];
-        let fishEyeStates = {};
         let bubbles = [];
         let crab = null;
 
@@ -117,33 +111,6 @@
             }
         }
 
-        function updateFishEyes(dt) {
-            fishArray.forEach((fish) => {
-                let state = fishEyeStates[fish.id];
-                if (!state) return;
-                state.blinkTimer -= dt;
-                if (state.blinkTimer <= 0) {
-                    state.blink = true;
-                    state.blinkTimer = 0.15;
-                    if (!state.wasBlinking) {
-                        state.wasBlinking = true;
-                        state.nextBlink = Math.random() * 4 + 2;
-                    }
-                } else if (state.blink && state.blinkTimer <= 0) {
-                    state.blink = false;
-                    state.blinkTimer = state.nextBlink || (Math.random() * 4 + 2);
-                    state.wasBlinking = false;
-                }
-                state.pupilTimer -= dt;
-                if (state.pupilTimer <= 0) {
-                    state.pupilTargetAngle = Math.random() * Math.PI * 2;
-                    state.pupilTimer = Math.random() * 2 + 1;
-                }
-                let diff = state.pupilTargetAngle - state.pupilAngle;
-                state.pupilAngle += diff * 0.1;
-            });
-        }
-
         function drawFish(fish) {
             const scale = fish.size || 1;
             ctx.save();
@@ -185,58 +152,7 @@
             ctx.fillStyle = fish.tailColor || "#d94f00";
             ctx.fill();
 
-            let eyeType = fish.eyes || "round";
-            let state = fishEyeStates[fish.id] || {};
-            let blink = state.blink;
-            let pupilAngle = state.pupilAngle || 0;
-
-            let eyeX = 18, eyeY = -5, eyeRadius = 6, pupilRadius = 2;
-
             ctx.save();
-            ctx.translate(eyeX, eyeY);
-
-            // Draw the white of the eye
-            if (eyeType === "normal" || eyeType === "round") {
-                // Full ellipse
-                ctx.beginPath();
-                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
-                ctx.fillStyle = "#fff";
-                ctx.fill();
-            } else if (eyeType === "bored") {
-                // Flat top, curved bottom (lower half of ellipse)
-                ctx.beginPath();
-                ctx.moveTo(-eyeRadius, 0);
-                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, Math.PI, 0, false);
-                ctx.lineTo(eyeRadius, 0);
-                ctx.lineTo(-eyeRadius, 0); // flat top
-                ctx.closePath();
-                ctx.fillStyle = "#fff";
-                ctx.fill();
-            } else if (eyeType === "happy") {
-                // Curved top, flat bottom (upper half of ellipse)
-                ctx.beginPath();
-                ctx.moveTo(-eyeRadius, 0);
-                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI, false);
-                ctx.lineTo(eyeRadius, 0);
-                ctx.lineTo(-eyeRadius, 0); // flat bottom
-                ctx.closePath();
-                ctx.fillStyle = "#fff";
-                ctx.fill();
-            }
-
-            // Draw the pupil
-            let pupilDist = blink ? 0 : eyeRadius * 0.5;
-            let px = Math.cos(pupilAngle) * pupilDist;
-            let py = Math.sin(pupilAngle) * pupilDist * (blink ? 0.2 : 1);
-
-            ctx.beginPath();
-            ctx.arc(px, py, pupilRadius, 0, Math.PI * 2);
-            ctx.fillStyle = "#222";
-            ctx.fill();
-
-            ctx.restore();
-
-
 
             if (fish.name && fish.name.trim().length > 0) {
                 ctx.font = `${14 * scale}px Arial`;
@@ -357,8 +273,6 @@
             let dt = (now - lastTime) / 1000;
             lastTime = now;
 
-            updateFishEyes(dt);
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawSeaweed();
             drawSand();
@@ -374,17 +288,7 @@
             fishArray = state.fishArray;
             bubbles = state.bubbles;
             crab = state.crab || null;
-            fishArray.forEach((fish) => {
-                if (!fishEyeStates[fish.id]) {
-                    fishEyeStates[fish.id] = {
-                        blink: false,
-                        blinkTimer: Math.random() * 4 + 2,
-                        pupilAngle: Math.random() * Math.PI * 2,
-                        pupilTargetAngle: Math.random() * Math.PI * 2,
-                        pupilTimer: Math.random() * 2 + 1
-                    };
-                }
-            });
+            
             if (!animationStarted) {
                 animationStarted = true;
                 draw();
@@ -392,15 +296,12 @@
         });
 
 
-
         document.getElementById('addFishBtn').onclick = function () {
             const nameInput = document.getElementById('fishNameInput');
             const colorInput = document.getElementById('fishColorInput');
-            const eyeInput = document.getElementById('fishEyeInput');
             const name = nameInput.value.trim();
             const color = colorInput.value || "#ff9900";
-            const eyes = eyeInput.value || "round";
-            socket.emit('addFish', { name, color, eyes });
+            socket.emit('addFish', { name, color });
 
             colorInput.value = getRandomColor();
             nameInput.value = '';

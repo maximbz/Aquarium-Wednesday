@@ -25,10 +25,6 @@ function randomHSLColor() {
     return `hsl(${Math.floor(Math.random() * 360)}, ${70 + Math.floor(Math.random() * 20)}%, ${50 + Math.floor(Math.random() * 20)}%)`;
 }
 
-function randomEyeType() {
-    const types = ["round", "bored", "happy"];
-    return types[Math.floor(Math.random() * types.length)];
-}
 
 
 let fishArray = [];
@@ -45,8 +41,7 @@ for (let i = 0; i < numFish; i++) {
         tailColor: randomHSLColor(),
         finColor: randomHSLColor(),
         size: randomFishSize(),
-        tailWigglePhase: Math.random() * Math.PI * 2,
-        eyes: randomEyeType() // Assign random eye type at startup!
+        tailWigglePhase: Math.random() * Math.PI * 2
     });
 }
 
@@ -130,7 +125,7 @@ setInterval(() => {
 
     io.emit('aquariumState', { fishArray, bubbles, crab });
 
-}, 30);
+}, 50);
 
 io.on('connection', (socket) => {
     console.log('A user connected');
@@ -161,9 +156,6 @@ io.on('connection', (socket) => {
             ? data.color
             : `hsl(${Math.random() * 360},80%,60%)`;
         let size = randomFishSize();
-        const eyes = (data && typeof data.eyes === 'string')
-            ? data.eyes
-            : randomEyeType(); // Use provided or randomize
 
 
         const namedSize = getSizeFromName(name);
@@ -178,7 +170,6 @@ io.on('connection', (socket) => {
             color,
             name,
             size,
-            eyes, // Always set!
             tailColor: randomHSLColor(),
             finColor: randomHSLColor(),
             tailWigglePhase: Math.random() * Math.PI * 2
