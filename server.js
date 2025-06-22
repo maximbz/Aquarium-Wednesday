@@ -50,13 +50,15 @@ setInterval(() => {
     for (let fish of fishArray) {
         fish.x += fish.dx;
         fish.y += fish.dy;
-        // Bounce off edges
-        if (fish.x < 0 || fish.x > AQUARIUM_WIDTH) {
-            if (fishArray.length > 3 && Math.random() < 0.1) { // 10% chance to leave
-                // Remove this fish from the array
-                fish._remove = true; // Mark for removal to avoid mutating array while looping
+        // If the fish is not already leaving and hits a wall
+        if (!fish.leaving && (fish.x < 0 || fish.x > AQUARIUM_WIDTH)) {
+            if (fishArray.length > 3 && Math.random() < 0.1) {
+                fish.leaving = true;
+                fish.leaveDirection = (fish.x < 0) ? 'left' : 'right';
+                // Optionally, ensure it keeps swimming out:
+                fish.dx = Math.abs(fish.dx) * (fish.leaveDirection === 'right' ? 1 : -1);
             } else {
-                fish.dx *= -1; // Bounce as usual
+                fish.dx *= -1;
             }
         }
 
