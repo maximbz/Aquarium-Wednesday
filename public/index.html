@@ -135,20 +135,35 @@
             // Animated Legs (3 per side)
             ctx.strokeStyle = "#a0522d";
             ctx.lineWidth = 2;
+            const legLength = 12;
             for (let i = -1; i <= 1; i++) {
-                // Leg wiggle: amplitude and phase offset per leg
-                let legWiggle = Math.sin((crab.stepPhase || 0) + i * 0.5) * 4;
+                // Each leg gets a slightly different phase for variety
+                let phase = (crab.stepPhase || 0) + i * 0.6;
+                // Wiggle angle in radians, small value like +/- 0.25 rad (~14 deg)
+                let baseAngle = Math.PI / 3 + i * 0.2; // spread legs out
+                let wiggle = Math.sin(phase) * 0.25; // wiggle amplitude
+                let angleLeft = baseAngle - wiggle;
+                let angleRight = Math.PI - baseAngle + wiggle;
+
                 // Left legs
                 ctx.beginPath();
                 ctx.moveTo(-8, 4 + i * 3);
-                ctx.lineTo(-16 - legWiggle, 10 + i * 5 + legWiggle);
+                ctx.lineTo(
+                    -8 + legLength * Math.cos(angleLeft),
+                    4 + i * 3 + legLength * Math.sin(angleLeft)
+                );
                 ctx.stroke();
+
                 // Right legs
                 ctx.beginPath();
                 ctx.moveTo(8, 4 + i * 3);
-                ctx.lineTo(16 + legWiggle, 10 + i * 5 + legWiggle);
+                ctx.lineTo(
+                    8 + legLength * Math.cos(angleRight),
+                    4 + i * 3 + legLength * Math.sin(angleRight)
+                );
                 ctx.stroke();
             }
+
 
             // Claws
             ctx.beginPath();
@@ -185,7 +200,6 @@
             for (let bubble of bubbles) {
                 drawBubble(bubble);
             }
-            console.log(fishArray); // Add this line
             // Draw fish
             for (let fish of fishArray) {
                 drawFish(fish);

@@ -93,7 +93,14 @@ setInterval(() => {
         fish.tailWigglePhase += 0.2; // or whatever speed you like
 
     }
-    fishArray = fishArray.filter(fish => !fish._remove);
+    fishArray = fishArray.filter(fish => {
+        if (!fish.leaving) return true;
+        // Remove if fully out of view
+        if (fish.leaveDirection === 'left' && fish.x < -30) return false;
+        if (fish.leaveDirection === 'right' && fish.x > AQUARIUM_WIDTH + 30) return false;
+        return true;
+    });
+
 
     // Update bubbles
     for (let bubble of bubbles) {
@@ -136,7 +143,8 @@ setInterval(() => {
 io.on('connection', (socket) => {
     console.log('A user connected');
     // Send current state to new client
-    socket.emit('aquariumState', { fishArray, bubbles });
+    socket.emit('aquariumState', { fishArray, bubbles, crab });
+
 
     // Helper to check for size words
     function getSizeFromName(name) {
@@ -181,7 +189,7 @@ io.on('connection', (socket) => {
             tailWigglePhase: Math.random() * Math.PI * 2
         };
         fishArray.push(newFish);
-        io.emit('aquariumState', { fishArray, bubbles });
+        io.emit('aquariumState', { fishArray, bubbles, crab });
     });
 
 
