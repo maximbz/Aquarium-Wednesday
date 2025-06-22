@@ -79,6 +79,39 @@
 
             ctx.restore();
 
+            // Calculate fin wiggle offset (slightly different phase for each fin)
+            let leftFinWiggle = Math.sin((fish.tailWigglePhase || 0) + 0.5) * 8;  // 8 is amplitude
+            let rightFinWiggle = Math.sin((fish.tailWigglePhase || 0) - 0.5) * 8;
+
+            // Draw left fin
+            ctx.save();
+            ctx.rotate(-0.5); // Angle the fin a bit
+            ctx.beginPath();
+            ctx.moveTo(-10, 10); // Attach point on body
+            ctx.quadraticCurveTo(-25, 25 + leftFinWiggle, 0, 20); // Control point and tip
+            ctx.lineTo(-10, 10); // Back to body
+            ctx.closePath();
+            ctx.fillStyle = "#ffe066";
+            ctx.globalAlpha = 0.7;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            ctx.restore();
+
+            // Draw right fin
+            ctx.save();
+            ctx.rotate(0.5); // Opposite angle
+            ctx.beginPath();
+            ctx.moveTo(-10, -10); // Attach point on body
+            ctx.quadraticCurveTo(-25, -25 + rightFinWiggle, 0, -20);
+            ctx.lineTo(-10, -10);
+            ctx.closePath();
+            ctx.fillStyle = "#ffe066";
+            ctx.globalAlpha = 0.7;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            ctx.restore();
+
+
             // Draw name if present
             if (fish.name && fish.name.trim().length > 0) {
                 ctx.font = `${14 * scale}px Arial`;
