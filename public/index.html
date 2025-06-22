@@ -269,6 +269,8 @@
 
         let lastTime = Date.now();
         function draw() {
+            console.log("draw called");
+
             let now = Date.now();
             let dt = (now - lastTime) / 1000;
             lastTime = now;
