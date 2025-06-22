@@ -51,15 +51,22 @@
             ctx.fill();
         }
         function drawFish(fish) {
-            // Draw the fish
+            const scale = fish.size || 1; // Use fish.size, fallback to 1
+
             ctx.save();
             ctx.translate(fish.x, fish.y);
-            if (fish.dx < 0) ctx.scale(-1, 1); // Flip if going left
+
+            // Flip horizontally for direction, and scale for size
+            let flip = (fish.dx < 0) ? -1 : 1;
+            ctx.scale(flip * scale, scale);
+
+            // Draw the fish body
             ctx.beginPath();
             ctx.ellipse(0, 0, 30, 15, 0, 0, Math.PI * 2);
             ctx.fillStyle = fish.color;
             ctx.fill();
-            // Tail
+
+            // Draw the tail
             ctx.beginPath();
             ctx.moveTo(-30, 0);
             ctx.lineTo(-45, -10);
@@ -67,15 +74,18 @@
             ctx.closePath();
             ctx.fillStyle = "#d94f00";
             ctx.fill();
+
             ctx.restore();
 
             // Only draw the name if it's not blank
             if (fish.name && fish.name.trim().length > 0) {
-                ctx.font = "14px Arial";
+                ctx.font = `${14 * scale}px Arial`;
                 ctx.fillStyle = "#222";
                 ctx.textAlign = "center";
-                ctx.fillText(fish.name, fish.x, fish.y - 25);
+                ctx.fillText(fish.name, fish.x, fish.y - 25 * scale);
             }
+        }
+
 
         }
 
