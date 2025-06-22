@@ -31,8 +31,10 @@ for (let i = 0; i < numFish; i++) {
         dx: (Math.random() - 0.5) * 4 + 2,
         dy: (Math.random() - 0.5) * 2,
         color: `hsl(${Math.random() * 360},80%,60%)`,
+        tailColor: randomHSLColor(),
+        finColor: randomHSLColor(),
         size: randomFishSize(),
-        tailWigglePhase: Math.random() * Math.PI * 2 // <-- add this line
+        tailWigglePhase: Math.random() * Math.PI * 2
     });
 
 
@@ -59,7 +61,7 @@ setInterval(() => {
         fish.y += fish.dy;
         // If the fish is not already leaving and hits a wall
         if (!fish.leaving && (fish.x < 0 || fish.x > AQUARIUM_WIDTH)) {
-            if (fishArray.length > 3 && Math.random() < 0.1) {
+            if (fishArray.length > 3 && Math.random() < 0.05) {
                 fish.leaving = true;
                 fish.leaveDirection = (fish.x < 0) ? 'left' : 'right';
                 // Optionally, ensure it keeps swimming out:
@@ -107,6 +109,8 @@ io.on('connection', (socket) => {
             color,
             name,
             size: randomFishSize(),
+            tailColor: randomHSLColor(),
+            finColor: randomHSLColor(),
             tailWigglePhase: Math.random() * Math.PI * 2 // <-- add this line
         };
 

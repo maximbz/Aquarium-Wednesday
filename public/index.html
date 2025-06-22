@@ -67,7 +67,7 @@
 
             // Draw single wiggling side fin
             const finOffsetX = -4; // negative = back
-            const finOffsetY = 3;  // positive = down
+            const finOffsetY = 4;  // positive = down
 
             let finWiggle = Math.sin((fish.tailWigglePhase || 0) + 1.0) * 4;
 
@@ -82,7 +82,7 @@
                 8 + finOffsetX, 0 + finOffsetY
             );
             ctx.closePath();
-            ctx.fillStyle = "#ffe066";
+            ctx.fillStyle = fish.finColor || "#ffe066"; // fallback if missing
             ctx.globalAlpha = 0.7;
             ctx.fill();
             ctx.globalAlpha = 1.0;
