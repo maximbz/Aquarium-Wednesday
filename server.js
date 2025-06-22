@@ -25,6 +25,12 @@ function randomHSLColor() {
     return `hsl(${Math.floor(Math.random() * 360)}, ${70 + Math.floor(Math.random() * 20)}%, ${50 + Math.floor(Math.random() * 20)}%)`;
 }
 
+function randomEyeType() {
+    const types = ["round", "bored", "happy"];
+    return types[Math.floor(Math.random() * types.length)];
+}
+
+
 let fishArray = [];
 let fishIdCounter = 1;
 const numFish = 5;
@@ -40,9 +46,11 @@ for (let i = 0; i < numFish; i++) {
         finColor: randomHSLColor(),
         size: randomFishSize(),
         tailWigglePhase: Math.random() * Math.PI * 2,
-        eyes: "round"
+        eyes: randomEyeType() // Assign random eye type at startup!
     });
 }
+
+
 
 let bubbles = [];
 const numBubbles = 15;
@@ -60,9 +68,10 @@ let crab = {
     y: AQUARIUM_HEIGHT - 22,
     direction: Math.random() < 0.5 ? 1 : -1,
     moving: false,
-    waitTimer: 1000 + Math.floor(Math.random() * 1000), // random initial wait!
+    waitTimer: 1000 + Math.floor(Math.random() * 1000), // <-- this is good!
     stepPhase: 0
 };
+
 
 setInterval(() => {
     // Update fish positions
@@ -118,6 +127,7 @@ setInterval(() => {
         }
     }
 
+
     io.emit('aquariumState', { fishArray, bubbles, crab });
 
 }, 30);
@@ -151,7 +161,10 @@ io.on('connection', (socket) => {
             ? data.color
             : `hsl(${Math.random() * 360},80%,60%)`;
         let size = randomFishSize();
-        const eyes = (data && typeof data.eyes === 'string') ? data.eyes : "round";
+        const eyes = (data && typeof data.eyes === 'string')
+            ? data.eyes
+            : randomEyeType(); // Use provided or randomize
+
 
         const namedSize = getSizeFromName(name);
         if (namedSize !== null) size = namedSize;
@@ -165,11 +178,12 @@ io.on('connection', (socket) => {
             color,
             name,
             size,
-            eyes,
+            eyes, // Always set!
             tailColor: randomHSLColor(),
             finColor: randomHSLColor(),
             tailWigglePhase: Math.random() * Math.PI * 2
         };
+
         fishArray.push(newFish);
         io.emit('aquariumState', { fishArray, bubbles, crab });
     });
