@@ -12,3 +12,5 @@ fish have eyes, which can be selected when you add a fish
 	half lidded (happy)
 	the eyes blink, pupils look around
 a little crab walks along the bottom, slowly from one side to the other, sometimes
+background blue gets darker as the day goes on
+the site checks what day if the week it is and will only show oyu any of this on Wednesday

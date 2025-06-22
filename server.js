@@ -20,6 +20,10 @@ function randomFishSize() {
     return Math.random() * (FISH_SIZE_MAX - FISH_SIZE_MIN) + FISH_SIZE_MIN;
 }
 
+function randomHSLColor() {
+    return `hsl(${Math.floor(Math.random() * 360)}, ${70 + Math.floor(Math.random() * 20)}%, ${50 + Math.floor(Math.random() * 20)}%)`;
+}
+
 
 // Multiple fish
 let fishArray = [];
