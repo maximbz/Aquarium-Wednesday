@@ -38,6 +38,14 @@
         }
         document.getElementById('fishColorInput').value = getRandomColor();
 
+        // Simple deterministic pseudo-random number generator
+        function seededRandom(seed) {
+            let value = seed % 2147483647;
+            return function () {
+                value = (value * 48271) % 2147483647;
+                return (value - 1) / 2147483646; // Returns float between 0 and 1
+            };
+        }
 
 
         let fishArray = [];
@@ -57,13 +65,28 @@
 
         function drawSeaweed() {
             const seaweedCount = 7;
-            const seaweedSpacing = canvas.width / (seaweedCount + 1);
+            const margin = 40; // Don't put seaweed at the very edge
+            const minDist = 30; // Minimum distance between tufts
 
-            // Use elapsed time since page load for deterministic animation
+            // Use a fixed seed for identical placement on all clients
+            const rand = seededRandom(12345);
+
+            // Generate random but deterministic X positions
+            let positions = [];
+            while (positions.length < seaweedCount) {
+                let x = margin + rand() * (canvas.width - 2 * margin);
+                // Ensure minimum distance from previous tufts
+                if (positions.every(px => Math.abs(px - x) > minDist)) {
+                    positions.push(x);
+                }
+            }
+            positions.sort((a, b) => a - b); // optional: sort for left-to-right order
+
+            // Animate sway based on time since page load
             let elapsed = (Date.now() - animationStart) / 1000; // seconds
 
-            for (let i = 1; i <= seaweedCount; i++) {
-                let baseX = i * seaweedSpacing;
+            for (let i = 0; i < seaweedCount; i++) {
+                let baseX = positions[i];
                 let baseY = canvas.height - 30; // Just above the sand
                 let height = 60 + Math.sin(elapsed / 0.9 + i) * 10; // Animate sway
 
@@ -90,6 +113,7 @@
                 ctx.restore();
             }
         }
+
 
 
 
