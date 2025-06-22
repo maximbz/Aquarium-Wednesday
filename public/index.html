@@ -269,8 +269,6 @@
 
         let lastTime = Date.now();
         function draw() {
-            console.log("draw called");
-
             let now = Date.now();
             let dt = (now - lastTime) / 1000;
             lastTime = now;
@@ -287,6 +285,7 @@
 
         let animationStarted = false;
         socket.on('aquariumState', (state) => {
+            console.log('Received aquariumState', state);
             fishArray = state.fishArray;
             bubbles = state.bubbles;
             crab = state.crab || null;
