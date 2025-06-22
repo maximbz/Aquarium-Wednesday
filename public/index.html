@@ -365,6 +365,7 @@
             requestAnimationFrame(draw);
         }
 
+        let animationStarted = false;
         socket.on('aquariumState', (state) => {
             fishArray = state.fishArray;
             bubbles = state.bubbles;
@@ -378,6 +379,10 @@
                         pupilTargetAngle: Math.random() * Math.PI * 2,
                         pupilTimer: Math.random() * 2 + 1
                     };
+                }
+                if (!animationStarted) {
+                    animationStarted = true;
+                    draw();
                 }
             });
         });
