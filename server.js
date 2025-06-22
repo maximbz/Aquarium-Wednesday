@@ -127,7 +127,7 @@ setInterval(() => {
         if ((crab.direction === 1 && crab.x > AQUARIUM_WIDTH + 20) ||
             (crab.direction === -1 && crab.x < -20)) {
             crab.moving = false;
-            crab.waitTimer = 200 + Math.floor(Math.random() * 400);
+            crab.waitTimer = 1000 + Math.floor(Math.random() * 1000); // 1000–2000 ticks
             crab.stepPhase = 0; // reset animation
         }
     }

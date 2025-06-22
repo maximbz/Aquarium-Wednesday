@@ -136,12 +136,12 @@
             ctx.strokeStyle = "#a0522d";
             ctx.lineWidth = 2;
             const legLength = 12;
-            const steps = 2; // fewer steps for choppier, cuter animation
+            const steps = 1; // Only two positions: -1 and 1
+
             for (let i = -1; i <= 1; i++) {
                 let phase = (crab.stepPhase || 0) + i * 0.6;
-                // Instead of smooth sine, snap to steps
                 let raw = Math.sin(phase);
-                let quantized = Math.round(raw * steps) / steps; // Snap to -1, 0, or 1 for steps=2
+                let quantized = Math.sign(raw); // Will be -1, 0, or 1 (but mostly -1 or 1)
                 let wiggle = quantized * 0.25; // amplitude
 
                 let baseAngle = Math.PI / 3 + i * 0.2;
