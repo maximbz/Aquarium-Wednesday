@@ -192,38 +192,31 @@
 
             let eyeX = 18, eyeY = -5, eyeRadius = 6, pupilRadius = 2;
 
-            let eyeType = fish.eyes || "round";
-            let state = fishEyeStates[fish.id] || {};
-            let blink = state.blink;
-            let pupilAngle = state.pupilAngle || 0;
-
-            let eyeX = 18, eyeY = -5, eyeRadius = 6, pupilRadius = 2;
-
             ctx.save();
             ctx.translate(eyeX, eyeY);
 
             // Draw the white of the eye
             if (eyeType === "normal" || eyeType === "round") {
-                // Full circle
+                // Full ellipse
                 ctx.beginPath();
                 ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
                 ctx.fillStyle = "#fff";
                 ctx.fill();
             } else if (eyeType === "bored") {
-                // Flat top, curved bottom
+                // Flat top, curved bottom (lower half of ellipse)
                 ctx.beginPath();
                 ctx.moveTo(-eyeRadius, 0);
-                ctx.arc(0, 0, eyeRadius, Math.PI, 0, false); // bottom half-circle
+                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, Math.PI, 0, false);
                 ctx.lineTo(eyeRadius, 0);
                 ctx.lineTo(-eyeRadius, 0); // flat top
                 ctx.closePath();
                 ctx.fillStyle = "#fff";
                 ctx.fill();
             } else if (eyeType === "happy") {
-                // Curved top, flat bottom
+                // Curved top, flat bottom (upper half of ellipse)
                 ctx.beginPath();
                 ctx.moveTo(-eyeRadius, 0);
-                ctx.arc(0, 0, eyeRadius, 0, Math.PI, false); // top half-circle
+                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI, false);
                 ctx.lineTo(eyeRadius, 0);
                 ctx.lineTo(-eyeRadius, 0); // flat bottom
                 ctx.closePath();
@@ -242,6 +235,7 @@
             ctx.fill();
 
             ctx.restore();
+
 
 
             if (fish.name && fish.name.trim().length > 0) {
