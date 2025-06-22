@@ -370,25 +370,22 @@
         }
 
         let animationStarted = false;
-        socket.on('aquariumState', (state) => {
-            fishArray = state.fishArray;
-            bubbles = state.bubbles;
-            crab = state.crab || null;
-            fishArray.forEach((fish) => {
-                if (!fishEyeStates[fish.id]) {
-                    fishEyeStates[fish.id] = {
-                        blink: false,
-                        blinkTimer: Math.random() * 4 + 2,
-                        pupilAngle: Math.random() * Math.PI * 2,
-                        pupilTargetAngle: Math.random() * Math.PI * 2,
-                        pupilTimer: Math.random() * 2 + 1
-                    };
-                }
-            });
-            if (!animationStarted) {
-                animationStarted = true;
-                draw();
+        fishArray.forEach((fish) => {
+            if (!fishEyeStates[fish.id]) {
+                fishEyeStates[fish.id] = {
+                    blink: false,
+                    blinkTimer: Math.random() * 4 + 2,
+                    pupilAngle: Math.random() * Math.PI * 2,
+                    pupilTargetAngle: Math.random() * Math.PI * 2,
+                    pupilTimer: Math.random() * 2 + 1
+                };
             }
+        });
+        if (!animationStarted) {
+            animationStarted = true;
+            draw();
+        }
+
         });
 
 
