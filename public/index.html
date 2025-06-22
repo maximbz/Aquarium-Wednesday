@@ -65,26 +65,12 @@
             ctx.fillStyle = fish.color;
             ctx.fill();
 
-            // Draw wiggling side fins (no rotation)
-            let leftFinWiggle = Math.sin((fish.tailWigglePhase || 0) + 0.5) * 8;
-            let rightFinWiggle = Math.sin((fish.tailWigglePhase || 0) - 0.5) * 8;
-
-            // Left fin
+            // Draw single wiggling side fin
+            let finWiggle = Math.sin((fish.tailWigglePhase || 0) + 1.0) * 8;
             ctx.beginPath();
-            ctx.moveTo(-5, 10);
-            ctx.quadraticCurveTo(-25, 25 + leftFinWiggle, 5, 22);
-            ctx.lineTo(-5, 10);
-            ctx.closePath();
-            ctx.fillStyle = "#ffe066";
-            ctx.globalAlpha = 0.7;
-            ctx.fill();
-            ctx.globalAlpha = 1.0;
-
-            // Right fin
-            ctx.beginPath();
-            ctx.moveTo(-5, -10);
-            ctx.quadraticCurveTo(-25, -25 + rightFinWiggle, 5, -22);
-            ctx.lineTo(-5, -10);
+            ctx.moveTo(0, 0); // Center of body
+            ctx.quadraticCurveTo(20, -10 + finWiggle, 28, 0);
+            ctx.quadraticCurveTo(20, 10 + finWiggle, 0, 0);
             ctx.closePath();
             ctx.fillStyle = "#ffe066";
             ctx.globalAlpha = 0.7;
@@ -111,6 +97,7 @@
                 ctx.fillText(fish.name, fish.x, fish.y - 25 * scale);
             }
         }
+
 
 
 
