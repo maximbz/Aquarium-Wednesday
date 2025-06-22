@@ -285,7 +285,6 @@
 
         let animationStarted = false;
         socket.on('aquariumState', (state) => {
-            console.log('Received aquariumState', state);
             fishArray = state.fishArray;
             bubbles = state.bubbles;
             crab = state.crab || null;
