@@ -192,38 +192,50 @@
 
             let eyeX = 18, eyeY = -5, eyeRadius = 6, pupilRadius = 2;
 
-            ctx.save();
-            ctx.translate(eyeX, eyeY); // Only one eye (upper)
-            ctx.beginPath();
-            ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
-            ctx.fillStyle = "#fff";
-            ctx.fill();
+            let eyeType = fish.eyes || "round";
+            let state = fishEyeStates[fish.id] || {};
+            let blink = state.blink;
+            let pupilAngle = state.pupilAngle || 0;
 
-            // Eyelids for half-lidded
-            if (!blink && (eyeType === "bored" || eyeType === "happy")) {
-                ctx.save();
+            let eyeX = 18, eyeY = -5, eyeRadius = 6, pupilRadius = 2;
+
+            ctx.save();
+            ctx.translate(eyeX, eyeY);
+
+            // Draw the white of the eye
+            if (eyeType === "normal" || eyeType === "round") {
+                // Full circle
                 ctx.beginPath();
-                if (eyeType === "bored") {
-                    ctx.ellipse(0, -eyeRadius * 0.4, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, true);
-                    ctx.lineTo(-eyeRadius, 0);
-                } else if (eyeType === "happy") {
-                    ctx.ellipse(0, -eyeRadius * 0.1, eyeRadius, eyeRadius * 0.5, 0, 0, Math.PI, false);
-                    ctx.lineTo(-eyeRadius, 0);
-                }
-                ctx.closePath();
-                ctx.fillStyle = "#ffe066";
-                ctx.globalAlpha = 0.8;
+                ctx.ellipse(0, 0, eyeRadius, eyeRadius * (blink ? 0.2 : 1), 0, 0, Math.PI * 2);
+                ctx.fillStyle = "#fff";
                 ctx.fill();
-                ctx.globalAlpha = 1.0;
-                ctx.restore();
+            } else if (eyeType === "bored") {
+                // Flat top, curved bottom
+                ctx.beginPath();
+                ctx.moveTo(-eyeRadius, 0);
+                ctx.arc(0, 0, eyeRadius, Math.PI, 0, false); // bottom half-circle
+                ctx.lineTo(eyeRadius, 0);
+                ctx.lineTo(-eyeRadius, 0); // flat top
+                ctx.closePath();
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+            } else if (eyeType === "happy") {
+                // Curved top, flat bottom
+                ctx.beginPath();
+                ctx.moveTo(-eyeRadius, 0);
+                ctx.arc(0, 0, eyeRadius, 0, Math.PI, false); // top half-circle
+                ctx.lineTo(eyeRadius, 0);
+                ctx.lineTo(-eyeRadius, 0); // flat bottom
+                ctx.closePath();
+                ctx.fillStyle = "#fff";
+                ctx.fill();
             }
 
-            // Pupil movement
+            // Draw the pupil
             let pupilDist = blink ? 0 : eyeRadius * 0.5;
             let px = Math.cos(pupilAngle) * pupilDist;
             let py = Math.sin(pupilAngle) * pupilDist * (blink ? 0.2 : 1);
 
-            // Pupil
             ctx.beginPath();
             ctx.arc(px, py, pupilRadius, 0, Math.PI * 2);
             ctx.fillStyle = "#222";
@@ -231,7 +243,6 @@
 
             ctx.restore();
 
-            ctx.restore();
 
             if (fish.name && fish.name.trim().length > 0) {
                 ctx.font = `${14 * scale}px Arial`;
@@ -386,6 +397,7 @@
             }
         });
 
+
         document.getElementById('addFishBtn').onclick = function () {
             const nameInput = document.getElementById('fishNameInput');
             const colorInput = document.getElementById('fishColorInput');
@@ -398,8 +410,6 @@
             colorInput.value = getRandomColor();
             nameInput.value = '';
         };
-
-        // draw(); <-- REMOVED! Don't call draw() here.
 
         canvas.addEventListener('click', function (event) {
             const rect = canvas.getBoundingClientRect();
