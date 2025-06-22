@@ -13,8 +13,11 @@ app.use(express.static('public'));
 
 const AQUARIUM_WIDTH = 900;
 const AQUARIUM_HEIGHT = 600;
-const FISH_SIZE_MIN = 0.4; // Smallest fish (change as desired)
-const FISH_SIZE_MAX = 2.0; // Largest fish (change as desired)
+const FISH_SIZE_MIN = 0.4;
+const FISH_SIZE_MAX = 2.0;
+const FISH_SIZE_TINY = 0.15; // even smaller than min
+const FISH_SIZE_HUGE = 3.0;  // even bigger than max
+
 
 function randomFishSize() {
     return Math.random() * (FISH_SIZE_MAX - FISH_SIZE_MIN) + FISH_SIZE_MIN;
@@ -101,10 +104,36 @@ io.on('connection', (socket) => {
     // Send current state to new client
     socket.emit('aquariumState', { fishArray, bubbles });
 
+    // Helper to check for size words
+    function getSizeFromName(name) {
+        if (!name) return null;
+        const lower = name.toLowerCase();
+        if (
+            lower.includes('big') ||
+            lower.includes('large') ||
+            lower.includes('giant')
+        ) return FISH_SIZE_MAX;
+        if (lower.includes('huge')) return FISH_SIZE_HUGE;   // super huge!
+        if (
+            lower.includes('tiny') ||
+            lower.includes('mini')
+        ) return FISH_SIZE_TINY;    // super tiny!
+        if (lower.includes('small')) return FISH_SIZE_MIN;
+        return null;
+    }
+
+
+
     // Listen for 'addFish' event from this client
     socket.on('addFish', (data) => {
         const name = (data && typeof data.name === 'string') ? data.name : "";
         const color = (data && typeof data.color === 'string' && data.color.match(/^#[0-9a-fA-F]{6}$/)) ? data.color : `hsl(${Math.random() * 360},80%,60%)`;
+        let size = randomFishSize();
+
+        // Secret feature: override size if name contains size words!
+        const namedSize = getSizeFromName(name);
+        if (namedSize !== null) size = namedSize;
+
         const newFish = {
             x: Math.random() * 600,
             y: Math.random() * 300 + 50,
@@ -112,15 +141,15 @@ io.on('connection', (socket) => {
             dy: (Math.random() - 0.5) * 2,
             color,
             name,
-            size: randomFishSize(),
+            size,
             tailColor: randomHSLColor(),
             finColor: randomHSLColor(),
-            tailWigglePhase: Math.random() * Math.PI * 2 // <-- add this line
+            tailWigglePhase: Math.random() * Math.PI * 2
         };
-
         fishArray.push(newFish);
         io.emit('aquariumState', { fishArray, bubbles });
     });
+
 
     // Listen for 'reverseFish' event from this client
     socket.on('reverseFish', (fishIndex) => {
