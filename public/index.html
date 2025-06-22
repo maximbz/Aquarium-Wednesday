@@ -87,7 +87,7 @@
 
             for (let i = 0; i < seaweedCount; i++) {
                 let baseX = positions[i];
-                let baseY = canvas.height - 30; // Just above the sand
+                let baseY = canvas.height - 8; // Planted in the sand!
                 let height = 60 + Math.sin(elapsed / 0.9 + i) * 10; // Animate sway
 
                 ctx.save();
@@ -112,6 +112,7 @@
                 ctx.stroke();
                 ctx.restore();
             }
+
         }
 
 
