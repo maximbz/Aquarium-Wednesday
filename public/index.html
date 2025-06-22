@@ -167,44 +167,44 @@
             }
 
             // Claws (arms with pincers)
-                function drawClaw(side) {
-                    // side: -1 for left, 1 for right
-                    var baseX = 14 * side;  // position to the left/right of body
-                    var baseY = -4;         // a little above crab center
-                    var clawWidth = 14;
-                    var clawHeight = 10;
-                    var clawAngle = side * Math.PI / 4; // rotate outward 45 degrees
+            function drawClaw(side) {
+                // side: -1 for left, 1 for right
+                var baseX = 13 * side;  // position to the left/right of body
+                var baseY = -5;         // a little above crab center
+                var clawWidth = 8;      // smaller width
+                var clawHeight = 6;     // smaller height
+                var clawAngle = side * Math.PI / 4; // rotate outward 45 degrees
 
-                    ctx.save();
-                    ctx.translate(baseX, baseY);
-                    ctx.rotate(clawAngle);
+                ctx.save();
+                ctx.translate(baseX, baseY);
+                ctx.rotate(clawAngle);
 
-                    // Draw a Pac-Man style claw (ellipse with a wedge missing)
-                    ctx.beginPath();
-                    // Start at angle -Math.PI/4, end at 2*Math.PI - Math.PI/4, but skip a wedge for the "mouth"
-                    var startAngle = -Math.PI / 4;
-                    var endAngle = 2 * Math.PI - Math.PI / 4;
-                    var mouthOpen = Math.PI / 3; // size of the "mouth" wedge
+                // Draw a Pac-Man style claw (ellipse with a wedge missing)
+                ctx.beginPath();
+                var startAngle = -Math.PI / 4;
+                var endAngle = 2 * Math.PI - Math.PI / 4;
+                var mouthOpen = Math.PI / 3; // size of the "mouth" wedge
 
-                    ctx.ellipse(
-                        0, 0,
-                        clawWidth, clawHeight,
-                        0,
-                        startAngle + mouthOpen / 2,
-                        endAngle - mouthOpen / 2,
-                        false
-                    );
-                    ctx.lineTo(0, 0); // close the mouth
-                    ctx.closePath();
+                ctx.ellipse(
+                    0, 0,
+                    clawWidth, clawHeight,
+                    0,
+                    startAngle + mouthOpen / 2,
+                    endAngle - mouthOpen / 2,
+                    false
+                );
+                ctx.lineTo(0, 0); // close the mouth
+                ctx.closePath();
 
-                    ctx.fillStyle = "#d2691e";
-                    ctx.strokeStyle = "#a0522d";
-                    ctx.lineWidth = 2;
-                    ctx.fill();
-                    ctx.stroke();
+                ctx.fillStyle = "#d2691e";
+                ctx.strokeStyle = "#a0522d";
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
 
-                    ctx.restore();
-                }
+                ctx.restore();
+            }
+
 
 
             drawClaw(-1); // left
