@@ -27,6 +27,7 @@
         const canvas = document.getElementById('aquarium');
         const ctx = canvas.getContext('2d');
         const socket = io();
+        console.log('Socket.IO client loaded:', socket);
 
         function getRandomColor() {
             // Returns a random hex color string
