@@ -152,14 +152,14 @@
             ctx.fillStyle = fish.tailColor || "#d94f00";
             ctx.fill();
 
-            ctx.save();
-
             if (fish.name && fish.name.trim().length > 0) {
                 ctx.font = `${14 * scale}px Arial`;
                 ctx.fillStyle = "#222";
                 ctx.textAlign = "center";
                 ctx.fillText(fish.name, fish.x, fish.y - 25 * scale);
             }
+
+            ctx.restore();
         }
 
         function drawBubble(bubble) {
